@@ -49,6 +49,6 @@ DurationOfEffects = 5
 CoastOfTower = 30
 
 SingleHealth = 90
-SingleVelocity = Tile_size // 4
+SingleVelocity = Tile_size // 2
 
 CoastOfWave = 20

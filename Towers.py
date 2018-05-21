@@ -95,6 +95,19 @@ class Tower:
                 pg.draw.circle(canvas, (25, 25, 25), (self.x + SN.Tile_size // 2, self.y + SN.Tile_size // 2),
                                self.type.radius, 2)
 
+    def shoot(self, enemies, bullets):
+        pos = SN.Vector(self.x + SN.Tile_size // 2, self.y + SN.Tile_size // 2)
+        m = 0
+        for i in range(len(enemies)):
+            if enemies[i][1][1] > m:
+                m = enemies[i][1][1]
+        for i in range(len(enemies)):
+            dist = (pos * enemies[i][1][0]) ** 0.5
+            if dist <= self.type.radius and enemies[i][1][1] == m:
+                bullet = Bullet(pos, enemies[i][1][0], self.type.damage, self.type.eob)
+                bullets.append(bullet)
+        return bullets
+
 
 SingleDamage = SN.SingleDamage
 SingleRadius = SN.SingleRadius

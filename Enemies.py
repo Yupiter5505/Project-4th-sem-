@@ -59,12 +59,11 @@ def render(enemy, canvas):
 def update(enemy, dt):
     """пока просто движние"""
     direction = SN.Vector(Trace[enemy[1][1] + 1][0] + SN.Tile_size // 2, Trace[enemy[1][1] + 1][1] + SN.Tile_size // 2)
-    print(direction.x, direction.y, sep=' ')
     direct = direction - enemy[1][0]
     l = (direct * direct) ** 0.5
     direct = direct*(1/l)
     enemy[1][0] = enemy[1][0] + direct*enemy[0].velocity*dt
-    if enemy[1][0].x > direction.x and enemy[1][0].y > direction.y:
+    if enemy[1][0].x >= direction.x - 5 and enemy[1][0].y >= direction.y - 5:
         enemy[1][1] += 1
     return enemy
 
@@ -72,29 +71,29 @@ def update(enemy, dt):
 def WaveCreation(n, Types):
     """Возвращает список вызываемых врагов"""
     Wave = []
-    pos = (SN.Vector(SN.Tile_size*1.5, SN.Tile_size*2.5), 0)
+    pos = [SN.Vector(SN.Tile_size*1.5, SN.Tile_size*2.5), 0]
     if n <= 5:
         for i in range(SN.CoastOfWave):
             A = Enemies(Types[0])
-            Wave.append((A, pos))
+            Wave.append([A, pos])
         return Wave
 
     if n % 25 == 0 and n % 100 != 0:
         B = Enemies(Types[8])
-        Wave.append((B, pos))
+        Wave.append([B, pos])
         Coast = SN.CoastOfWave - Types[8].coast
         for i in range(Coast):
             A = rnd.choice(Types[:5])
-            Wave.append((A, pos))
+            Wave.append([A, pos])
         return Wave
 
     if n % 100 == 0:
         B = Enemies(Types[9])
-        Wave.append((B, pos))
+        Wave.append([B, pos])
         Coast = SN.CoastOfWave - Types[9]
         for i in range(Coast):
             A = rnd.choice(Types[:5])
-            Wave.append((A, pos))
+            Wave.append([A, pos])
         return Wave
 
     Coast = SN.CoastOfWave
@@ -109,12 +108,12 @@ def WaveCreation(n, Types):
         k = 7
 
     while Coast > 0:
-        A = rnd.choice(Types[:k])
+        A = Enemies(rnd.choice(Types[:k]))
         if Coast > A.type.coast:
             if A != Types[7]:
-                Wave.append((A, pos))
+                Wave.append([A, pos])
                 Coast -= A.type.coast
             elif SN.found(A, Wave) < 2:
-                Wave.append((A, pos))
+                Wave.append([A, pos])
                 Coast -= A.type.coast
     return Wave

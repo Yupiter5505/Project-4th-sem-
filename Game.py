@@ -72,12 +72,14 @@ for tile in Maps.Map_1:
     Tiles.append(create_tile(tile, Maps.Tile_size))
 
 T = 0
+ZT = 0
 NOfWave = 0
 NOfEnemy = 0
 enemies = []
 
 Gold = 120
 towers = []
+bullets = []
 
 life = 100
 Start = False
@@ -86,8 +88,6 @@ StateOfWave = True
 
 while True:
     dt = clock.tick(50) / 1000.0
-    if Start:
-        T += dt
 
     for event in pg.event.get():
         if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
@@ -120,26 +120,39 @@ while True:
 
         if event.type == pg.KEYDOWN and event.key in [pg.K_KP1, pg.K_KP2, pg.K_KP3]:
             for i in range(len(Tiles)):
-                if Tiles[i].act and type(Tiles[i]) == Towers.Tower:
+                if Tiles[i].act and type(Tiles[i]) != Tile:
                     Gold = Tiles[i].upgrade(event.key, Gold)
 
     if Start:
-        if T % 60 == 0 or NOfWave == 0 or enemies[len(enemies)//2][1][1] >= 10:
+        T += dt
+        if ZT < int(T):
+            ZT = int(T)
+
+        if (ZT % 120 == 0 and ZT != 0) or NOfWave == 0:
             NOfWave += 1
             wave, StateOfWave = Enemies.WaveCreation(NOfWave, Enemies.Types), False
-            print(len(wave))
+            # print(wave)
+            wave.reverse()
+            j = 0
 
-        if T % 2 == 0 and len(wave) != 0:
-            enemies.append(wave.pop(0))
+        if (ZT % 2 == 0 and ZT != 0) and j != len(wave):
+            enemy = wave[j]
+            j += 1
+            enemies.append(enemy)
+
         elif len(wave) == 0:
             StateOfWave = True
 
-        if StateOfWave is True:
-            for i in range(len(enemies)):
-                enemies[i] = Enemies.update(enemies[i], dt)
-        else:
-            for i in range(len(enemies) - 1):
-                enemies[i] = Enemies.update(enemies[i], dt)
+        # print(len(enemies))
+
+        i = 0
+        while i != len(enemies):
+            enemies[i] = Enemies.update(enemies[i], dt)
+            if enemies[i][1][1] == 19:
+                life -= 1
+                enemies.pop(i)
+                i -= 1
+            i += 1
 
     if GameOver:
         print('Игра окончна!')
